@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<title>مُعلّمي الفرنسي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0f1a; --card:#1a2435;
+  --border:rgba(196,160,80,0.18);
+  --gold:#c4a050; --gold2:#e8cc88; --cream:#f0e8d8;
+  --muted:#7a8fa8; --text:#ddd5c8;
+  --ok:#4caf82; --warn:#e0a040; --err:#e05555; --r:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(196,160,80,.07) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 90%,rgba(30,80,160,.08) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.screen{display:none;flex-direction:column;height:100vh;overflow-y:auto;position:relative;z-index:1;padding:20px 16px 36px;}
+.screen.active{display:flex;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.app-header{text-align:center;padding:16px 0 22px;}
+.flag{font-size:2.5rem;display:block;margin-bottom:6px;}
+.app-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold);letter-spacing:1px;}
+.app-sub{font-size:.82rem;color:var(--muted);margin-top:4px;}
+.badge{display:inline-block;background:rgba(196,160,80,.12);border:1px solid var(--border);color:var(--gold);font-size:.72rem;padding:3px 14px;border-radius:20px;margin-top:8px;letter-spacing:1px;}
+.sec-lbl{font-size:.85rem;color:var(--muted);text-align:center;margin-bottom:14px;font-weight:300;}
+.topics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.tc{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:18px 12px;cursor:pointer;text-align:center;transition:all .22s;user-select:none;}
+.tc:active{transform:scale(.97);}
+.tc.sel{border-color:var(--gold);background:rgba(196,160,80,.1);box-shadow:0 0 18px rgba(196,160,80,.15);}
+.ti{font-size:1.9rem;display:block;margin-bottom:7px;}
+.tn{font-size:.9rem;font-weight:600;color:var(--cream);}
+.td{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.4;}
+.btn-main{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),#8a6020);color:#0a0f1a;border:none;border-radius:var(--r);font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+.btn-main:active{transform:scale(.98);opacity:.9;}
+.btn-main:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.btn-out{background:transparent;border:1.5px solid var(--gold);color:var(--gold);border-radius:12px;font-family:'Tajawal',sans-serif;font-size:.9rem;font-weight:500;padding:12px;width:100%;cursor:pointer;transition:all .2s;}
+.btn-out:active{background:rgba(196,160,80,.1);}
+.btn-sm{background:none;border:1px solid rgba(122,143,168,.3);color:var(--muted);font-family:'Tajawal',sans-serif;font-size:.78rem;padding:5px 12px;border-radius:8px;cursor:pointer;}
+.c-top{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;}
+.c-pill{background:rgba(196,160,80,.13);border:1px solid var(--border);color:var(--gold);font-size:.78rem;padding:4px 12px;border-radius:20px;flex:1;}
+.prog-row{display:flex;gap:7px;justify-content:center;margin-bottom:16px;}
+.pdot{width:9px;height:9px;border-radius:50%;background:rgba(122,143,168,.25);transition:all .3s;}
+.pdot.done{background:var(--ok);}
+.pdot.cur{background:var(--gold);transform:scale(1.35);}
+.ai-bub{background:var(--card);border:1px solid var(--border);border-radius:18px 18px 18px 4px;padding:18px;margin-bottom:12px;}
+.ai-tag{font-size:.68rem;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase;display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.ai-tag::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;}
+.ai-fr{font-family:'Cormorant Garamond',serif;font-size:1.55rem;color:var(--cream);direction:ltr;text-align:left;margin-bottom:6px;line-height:1.3;}
+.ai-ar{font-size:.82rem;color:var(--muted);}
+.exp-box{background:rgba(196,160,80,.05);border:1px solid rgba(196,160,80,.22);border-radius:var(--r);padding:14px;margin-bottom:14px;}
+.exp-tag{font-size:.68rem;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.exp-fr{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--cream);direction:ltr;text-align:left;margin-bottom:5px;}
+.exp-ph{font-size:.82rem;color:var(--gold2);direction:ltr;text-align:left;margin-bottom:4px;font-style:italic;}
+.exp-ar{font-size:.8rem;color:var(--muted);}
+.tip{background:rgba(10,15,26,.5);border:1px dashed rgba(196,160,80,.18);border-radius:10px;padding:10px 13px;font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:14px;}
+.tip b{color:var(--gold);}
+.att-row{display:flex;gap:6px;justify-content:center;margin-bottom:10px;}
+.adot{width:7px;height:7px;border-radius:50%;background:rgba(122,143,168,.2);transition:all .3s;}
+.adot.used{background:var(--warn);}
+.rec-wrap{text-align:center;margin-bottom:14px;}
+.btn-rec{width:76px;height:76px;border-radius:50%;border:2.5px solid var(--gold);background:transparent;display:inline-flex;align-items:center;justify-content:center;font-size:1.9rem;cursor:pointer;transition:all .25s;}
+.btn-rec:active{transform:scale(.95);}
+.btn-rec.on{border-color:var(--err);background:rgba(224,85,85,.12);animation:pulse 1.1s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(224,85,85,.35)}50%{box-shadow:0 0 0 12px rgba(224,85,85,0)}}
+.rec-lbl{font-size:.78rem;color:var(--muted);margin-top:8px;}
+.rec-st{font-size:.82rem;color:var(--err);margin-top:5px;min-height:18px;font-weight:500;}
+.notice{background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.22);border-radius:10px;padding:11px 14px;font-size:.8rem;color:#e88;margin-bottom:12px;display:none;line-height:1.5;}
+.notice.show{display:block;}
+.fb-box{border-radius:var(--r);padding:16px;margin-bottom:12px;display:none;}
+.fb-box.show{display:block;animation:fadeUp .3s;}
+.fb-ok{background:rgba(76,175,130,.09);border:1px solid rgba(76,175,130,.28);}
+.fb-warn{background:rgba(224,160,64,.09);border:1px solid rgba(224,160,64,.28);}
+.fb-err{background:rgba(224,85,85,.08);border:1px solid rgba(224,85,85,.22);}
+.fb-title{font-size:1rem;font-weight:700;margin-bottom:8px;}
+.fb-ok .fb-title{color:var(--ok);}
+.fb-warn .fb-title{color:var(--warn);}
+.fb-err .fb-title{color:var(--err);}
+.fb-heard{font-size:.8rem;color:var(--muted);direction:ltr;text-align:left;margin-bottom:8px;}
+.fb-txt{font-size:.85rem;color:var(--text);line-height:1.7;}
+.fb-txt b{color:var(--gold);}
+.sp-wrap{text-align:center;padding:28px;display:none;}
+.sp-wrap.show{display:block;}
+.spinner{width:30px;height:30px;border:2px solid rgba(196,160,80,.18);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;margin-bottom:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sp-txt{font-size:.83rem;color:var(--muted);}
+.sum-score{font-family:'Cormorant Garamond',serif;font-size:4rem;color:var(--gold);font-weight:700;line-height:1;text-align:center;}
+.sum-lbl{font-size:1rem;color:var(--muted);margin-top:6px;margin-bottom:24px;text-align:center;}
+.s-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:.82rem;}
+.s-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: TOPICS -->
+<div class="screen active" id="s-topics">
+  <div class="app-header">
+    <span class="flag">🇫🇷</span>
+    <div class="app-title">مُعلّمي الفرنسي</div>
+    <div class="app-sub">تعلّم المحادثة — صوت بصوت</div>
+    <span class="badge">المستوى A1 — مجاني دائماً</span>
+  </div>
+  <p class="sec-lbl">اختر موضوع جلستك اليوم</p>
+  <div class="topics-grid">
+    <div class="tc" onclick="pickTopic('greet','التحية والتعارف','👋',this)">
+      <span class="ti">👋</span>
+      <div class="tn">التحية والتعارف</div>
+      <div class="td">مرحبا، كيف حالك، ما اسمك</div>
+    </div>
+    <div class="tc" onclick="pickTopic('work','الحرفة والعمل','🔨',this)">
+      <span class="ti">🔨</span>
+      <div class="tn">الحرفة والعمل</div>
+      <div class="td">ماذا تعمل، مشاريعك، خبرتك</div>
+    </div>
+    <div class="tc" onclick="pickTopic('daily','الحياة اليومية','☀️',this)">
+      <span class="ti">☀️</span>
+      <div class="tn">الحياة اليومية</div>
+      <div class="td">الوقت، الطقس، يومك</div>
+    </div>
+    <div class="tc" onclick="pickTopic('city','المدينة والمكان','🏙️',this)">
+      <span class="ti">🏙️</span>
+      <div class="tn">المدينة والمكان</div>
+      <div class="td">أين تسكن، وصف مكانك</div>
+    </div>
+  </div>
+  <button class="btn-main" id="btn-start" disabled onclick="startSession()">ابدأ الجلسة ←</button>
+</div>
+
+<!-- SCREEN 2: CONVO -->
+<div class="screen" id="s-convo">
+  <div class="c-top">
+    <span id="c-icon">👋</span>
+    <span class="c-pill" id="c-pill">—</span>
+    <button class="btn-sm" onclick="goTopics()">تغيير</button>
+  </div>
+  <div class="prog-row" id="prog-row"></div>
+  <div class="sp-wrap" id="spinner">
+    <div class="spinner"></div>
+    <div class="sp-txt">المعلّم يُعدّ المحادثة...</div>
+  </div>
+  <div id="convo-body">
+    <div class="ai-bub">
+      <div class="ai-tag">المعلّم يقول</div>
+      <div class="ai-fr" id="ai-fr">—</div>
+      <div class="ai-ar" id="ai-ar">—</div>
+    </div>
+    <div class="exp-box">
+      <div class="exp-tag">🎯 ردّك — قل هذا بالفرنسية</div>
+      <div class="exp-fr" id="exp-fr">—</div>
+      <div class="exp-ph" id="exp-ph">—</div>
+      <div class="exp-ar" id="exp-ar">—</div>
+    </div>
+    <div class="tip">اقرأ الجملة بصوت عالٍ عدة مرات أولاً، ثم اضغط 🎙️ — <b>لا تخف من الخطأ!</b></div>
+    <div class="att-row">
+      <div class="adot" id="a0"></div>
+      <div class="adot" id="a1"></div>
+      <div class="adot" id="a2"></div>
+    </div>
+    <div class="rec-wrap">
+      <button class="btn-rec" id="btn-rec" onclick="toggleRec()">🎙️</button>
+      <div class="rec-lbl" id="rec-lbl">اضغط للتسجيل</div>
+      <div class="rec-st" id="rec-st"></div>
+    </div>
+    <div class="notice" id="notice"></div>
+    <div class="fb-box" id="fb-box">
+      <div class="fb-title" id="fb-title"></div>
+      <div class="fb-heard" id="fb-heard"></div>
+      <div class="fb-txt"   id="fb-txt"></div>
+      <br>
+      <button class="btn-out" onclick="nextTurn()">التالي ←</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: SUMMARY -->
+<div class="screen" id="s-summary">
+  <div class="app-header">
+    <span class="flag">🎉</span>
+    <div class="app-title">انتهت الجلسة!</div>
+  </div>
+  <div class="sum-score" id="sum-score">0/5</div>
+  <div class="sum-lbl">إجاباتك الصحيحة</div>
+  <div id="sum-list"></div>
+  <button class="btn-main" onclick="goTopics()">جلسة جديدة ←</button>
+</div>
+
+<script>
+// ── CONFIG ──
+const OR_KEY   = "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";
+const OR_URL   = "https://openrouter.ai/api/v1/chat/completions";
+const OR_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+
+// ── STATE ──
+const TOTAL = 5;
+let topic = {key:'',label:'',icon:''};
+let step = 0, attempts = 0;
+let turn = null, history = [];
+let recog = null, recording = false;
+
+// ── SCREENS ──
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goTopics(){ show('s-topics'); }
+
+// ── TOPIC ──
+function pickTopic(key,label,icon,el){
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  topic={key,label,icon};
+  document.getElementById('btn-start').disabled=false;
+}
+
+function startSession(){
+  step=0; history=[]; attempts=0;
+  document.getElementById('c-pill').textContent=topic.label;
+  document.getElementById('c-icon').textContent=topic.icon;
+  buildProgress();
+  show('s-convo');
+  loadTurn();
+}
+
+// ── PROGRESS ──
+function buildProgress(){
+  const row=document.getElementById('prog-row');
+  row.innerHTML='';
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='pdot'+(i===0?' cur':'');
+    d.id='pd'+i; row.appendChild(d);
+  }
+}
+function refreshProgress(){
+  for(let i=0;i<TOTAL;i++){
+    const d=document.getElementById('pd'+i);
+    if(d) d.className='pdot'+(i<step?' done':i===step?' cur':'');
+  }
+}
+function refreshAttempts(){
+  for(let i=0;i<3;i++){
+    document.getElementById('a'+i).className='adot'+(i<attempts?' used':'');
+  }
+}
+
+// ── OPENROUTER CALL ──
+async function callAI(systemPrompt, userMsg) {
+  const res = await fetch(OR_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${OR_KEY}`,
+      "HTTP-Referer": "https://wordcollab.github.io",
+      "X-Title": "French Tutor A1"
+    },
+    body: JSON.stringify({
+      model: OR_MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user",   content: userMsg }
+      ],
+      max_tokens: 600,
+      temperature: 0.7
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err?.error?.message || 'HTTP ' + res.status);
+  }
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+// ── LOAD TURN ──
+async function loadTurn(){
+  setLoading(true); hideFb(); hideNotice();
+  attempts=0; refreshAttempts();
+
+  const ctx = history.length
+    ? 'سياق المحادثة:\n'+history.map(h=>`معلم: ${h.ai} | طالب: ${h.exp}`).join('\n')
+    : 'هذه أول جملة.';
+
+  const sys = `أنت مدرّس فرنسية للمبتدئين A1.
+المتعلم: عبدل، حرفي جزائري من وهران.
+الموضوع: ${topic.label}.
+${ctx}
+
+أنشئ الدور التالي من المحادثة.
+أجب بـ JSON فقط بلا أي نص خارجه أو backticks أو markdown:
+{
+  "ai_french": "جملة قصيرة يقولها المعلم بالفرنسية مناسبة A1",
+  "ai_arabic": "معنى جملة المعلم بالعربية",
+  "expected_french": "الرد القصير المتوقع بالفرنسية",
+  "expected_phonetic": "نطق الرد بالحروف العربية",
+  "expected_meaning": "معنى الرد بالعربية"
+}
+جمل قصيرة جداً. استمر بشكل طبيعي في نفس الموضوع.`;
+
+  try{
+    const raw = await callAI(sys, "الدور التالي");
+    const clean = raw.replace(/```json|```/g,'').trim();
+    // extract JSON if surrounded by text
+    const match = clean.match(/\{[\s\S]*\}/);
+    turn = JSON.parse(match ? match[0] : clean);
+    setLoading(false); displayTurn();
+  }catch(e){
+    setLoading(false);
+    showNotice('⚠️ تعذّر تحميل المحادثة. تحقق من الإنترنت.',true);
+    console.error(e);
+  }
+}
+
+function displayTurn(){
+  document.getElementById('ai-fr').textContent  = turn.ai_french;
+  document.getElementById('ai-ar').textContent  = turn.ai_arabic;
+  document.getElementById('exp-fr').textContent = turn.expected_french;
+  document.getElementById('exp-ph').textContent = '🔊 '+turn.expected_phonetic;
+  document.getElementById('exp-ar').textContent = '💬 '+turn.expected_meaning;
+  document.getElementById('btn-rec').disabled   = false;
+}
+
+// ── RECORDING ──
+function toggleRec(){ recording?stopRec():startRec(); }
+
+function startRec(){
+  hideFb(); hideNotice();
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){
+    showNotice('❌ استخدم Chrome على الأندرويد للتسجيل الصوتي.');
+    return;
+  }
+  const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+  recog = new SR();
+  recog.lang='fr-FR';
+  recog.interimResults=false;
+  recog.maxAlternatives=3;
+  recog.continuous=false;
+
+  recog.onstart=()=>{
+    recording=true;
+    document.getElementById('btn-rec').classList.add('on');
+    document.getElementById('btn-rec').textContent='⏹️';
+    document.getElementById('rec-lbl').textContent='يستمع... تحدّث الآن';
+    document.getElementById('rec-st').textContent='● تسجيل جاري';
+  };
+
+  recog.onresult=(e)=>{
+    const best=e.results[0][0].transcript;
+    const conf=e.results[0][0].confidence;
+    stopRec(); analyzeResponse(best,conf);
+  };
+
+  recog.onerror=(e)=>{
+    stopRec();
+    const msgs={
+      'no-speech':'لم يُكتشف صوت. تحدّث بصوت أعلى.',
+      'not-allowed':'اسمح للمتصفح بالميكروفون من إعدادات Chrome.',
+      'network':'خطأ في الشبكة.',
+      'audio-capture':'لا يمكن الوصول للميكروفون.'
+    };
+    showNotice('⚠️ '+(msgs[e.error]||'خطأ: '+e.error));
+  };
+
+  recog.onend=()=>{ if(recording) stopRec(); };
+  try{ recog.start(); }
+  catch(e){ stopRec(); showNotice('⚠️ تعذّر فتح الميكروفون.'); }
+}
+
+function stopRec(){
+  recording=false;
+  try{ recog?.stop(); }catch(e){}
+  document.getElementById('btn-rec').classList.remove('on');
+  document.getElementById('btn-rec').textContent='🎙️';
+  document.getElementById('rec-lbl').textContent='اضغط للتسجيل';
+  document.getElementById('rec-st').textContent='';
+}
+
+// ── ANALYZE ──
+async function analyzeResponse(heard,conf){
+  attempts++; refreshAttempts();
+  document.getElementById('rec-st').textContent='جاري التحليل...';
+  document.getElementById('btn-rec').disabled=true;
+
+  const sys = `أنت محلل نطق للفرنسية. المتعلم مستوى A1.
+الجملة المطلوبة: "${turn.expected_french}"
+ما سُمع: "${heard}"
+ثقة التعرف: ${Math.round((conf||0)*100)}%
+المحاولة: ${attempts}/3
+
+أجب بـ JSON فقط بلا أي نص خارجه أو backticks:
+{
+  "score": "excellent" أو "good" أو "retry",
+  "title": "تقييم قصير بالعربية",
+  "heard": "ما سُمع",
+  "feedback": "تغذية راجعة بالعربية: ما أصابه وما يحتاج تحسينه. جملتان."
+}
+excellent=مطابق أو شبه مطابق، good=70%+، retry=أقل. كن مشجعاً دائماً.`;
+
+  try{
+    const raw = await callAI(sys, "حلّل النطق");
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const match = clean.match(/\{[\s\S]*\}/);
+    const r = JSON.parse(match ? match[0] : clean);
+    document.getElementById('rec-st').textContent='';
+    document.getElementById('btn-rec').disabled=false;
+    showFb(r);
+  }catch(e){
+    document.getElementById('rec-st').textContent='';
+    document.getElementById('btn-rec').disabled=false;
+    showNotice('⚠️ خطأ في التحليل. حاول مرة أخرى.');
+    console.error(e);
+  }
+}
+
+// ── FEEDBACK ──
+function showFb(r){
+  const box=document.getElementById('fb-box');
+  const cls={excellent:'fb-ok',good:'fb-warn',retry:'fb-err'};
+  box.className='fb-box show '+(cls[r.score]||'fb-err');
+  document.getElementById('fb-title').textContent=r.title||'';
+  document.getElementById('fb-heard').textContent=r.heard?'🎤 سُمع: '+r.heard:'';
+  document.getElementById('fb-txt').innerHTML=(r.feedback||'').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+  if(r.score==='retry'&&attempts<3) document.getElementById('btn-rec').disabled=false;
+  if(r.score!=='retry'||attempts>=3) history.push({ai:turn.ai_french,exp:turn.expected_french,score:r.score});
+}
+function hideFb(){ document.getElementById('fb-box').className='fb-box'; }
+
+// ── NEXT ──
+function nextTurn(){
+  if(history.length<=step) history.push({ai:turn.ai_french,exp:turn.expected_french,score:'retry'});
+  step++;
+  if(step>=TOTAL){ showSummary(); return; }
+  refreshProgress(); loadTurn();
+}
+
+// ── SUMMARY ──
+function showSummary(){
+  const good=history.filter(h=>h.score==='excellent'||h.score==='good').length;
+  document.getElementById('sum-score').textContent=good+'/'+TOTAL;
+  const list=document.getElementById('sum-list');
+  list.innerHTML='';
+  const col={excellent:'#4caf82',good:'#e0a040',retry:'#e05555'};
+  const lbl={excellent:'ممتاز ✓',good:'جيد ✓',retry:'يحتاج تدريب'};
+  history.forEach(h=>{
+    const el=document.createElement('div');
+    el.className='s-item';
+    el.innerHTML=`<div class="s-dot" style="background:${col[h.score]||'#888'}"></div><div style="flex:1;direction:ltr;text-align:left;font-family:'Cormorant Garamond',serif;font-size:1rem;color:#f0e8d8">${h.exp}</div><div style="font-size:.78rem;color:${col[h.score]||'#888'}">${lbl[h.score]||''}</div>`;
+    list.appendChild(el);
+  });
+  show('s-summary');
+}
+
+// ── HELPERS ──
+function setLoading(on){
+  document.getElementById('spinner').className='sp-wrap'+(on?' show':'');
+  document.getElementById('convo-body').style.display=on?'none':'block';
+}
+function showNotice(msg,retry){
+  const el=document.getElementById('notice');
+  el.innerHTML=msg+(retry?` <button onclick="loadTurn()" style="margin-right:8px;background:none;border:1px solid #e88;color:#e88;font-family:Tajawal,sans-serif;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.78rem">إعادة المحاولة</button>`:'');
+  el.className='notice show';
+}
+function hideNotice(){ document.getElementById('notice').className='notice'; }
+</script>
+</body>
+</html>
